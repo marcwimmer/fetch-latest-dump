@@ -23,7 +23,7 @@ URL = 'https://github.com/marcwimmer/fetch-latest-file'
 EMAIL = 'marc@itewimmer.de'
 AUTHOR = 'Marc-Christian Wimmer'
 REQUIRES_PYTHON = '>=3.6.0'
-VERSION = '0.0.6'
+VERSION = '0.0.7'
 
 # What packages are required for this module to be executed?
 REQUIRED = [ 'click', 'inquirer', 'arrow', 'pathlib' ]
@@ -142,7 +142,7 @@ setup(
     #py_modules=['prlsnapshotter'],
 
     entry_points={
-        'console_scripts': ['fetch-latest-file=fetch_latest_file:cli'],
+        'console_scripts': ['fetch=fetch_latest_file:cli'],
     },
     data_files=[
     ],
