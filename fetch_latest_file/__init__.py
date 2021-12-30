@@ -8,8 +8,6 @@ from .config import Config
 from click_default_group import DefaultGroup
 
 
-click_completion.init()
-
 global_data = {
     'config': None
 }

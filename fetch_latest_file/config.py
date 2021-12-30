@@ -6,11 +6,9 @@ import sys
 import json
 import os
 from contextlib import contextmanager
-import spurplus
 import configparser
 from paramiko.config import SSHConfig
 import subprocess
-import spur
 
 BASE_PATH = Path(os.path.expanduser("~/.fetch_latest_file.d"))
 SSH_CONFIG = Path(os.path.expanduser("~/.ssh/config"))

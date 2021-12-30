@@ -23,10 +23,10 @@ URL = 'https://github.com/marcwimmer/fetch-latest-file'
 EMAIL = 'marc@itewimmer.de'
 AUTHOR = 'Marc-Christian Wimmer'
 REQUIRES_PYTHON = '>=3.6.0'
-VERSION = '0.0.4'
+VERSION = '0.0.5'
 
 # What packages are required for this module to be executed?
-REQUIRED = [ 'click', 'inquirer', 'arrow', 'pathlib', 'spurplus']
+REQUIRED = [ 'click', 'inquirer', 'arrow', 'pathlib' ]
 
 # What packages are optional?
 EXTRAS = {
