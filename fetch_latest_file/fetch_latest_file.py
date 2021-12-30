@@ -13,6 +13,13 @@ import subprocess
 from . import cli
 from .config import pass_config
 
+def get_sources(ctx, args, incomplete):
+    config = Config()
+    keys = config.sources.keys()
+    if incomplete:
+        keys = list(filter(lambda x: x.startswith(incomplete), keys))
+    return keys
+
 
 @cli.command()
 @pass_config
@@ -34,8 +41,10 @@ def transfer(config, filename):
     ])
 
 @cli.command(help="Choose specific file to download")
+@click.argument('source', required=True, autocompletion=get_sources)
 @pass_config
-def choose(config):
+def choose(config, source):
+    config.source = source
     with config.shell() as (config, shell):
         files = list(_get_files(config, shell))
         answer = inquirer.prompt([
@@ -47,6 +56,7 @@ def choose(config):
         transfer(config, file)
 
 @cli.command()
+@click.option('-s', '--source', required=True)
 @click.option('-f', '--filename', required=True)
 @click.option('-H', '--host', required=True)
 @click.option('-U', '--username', required=False)
@@ -54,7 +64,8 @@ def choose(config):
 @click.option('-p', '--path', required=True)
 @click.option('-d', '--destination', required=True)
 @pass_config
-def add(config, filename, host, username, regex, path, destination):
+def add(config, source, filename, host, username, regex, path, destination):
+    config.source = source
     config.add(
         filename=filename,
         host=host,
@@ -66,8 +77,11 @@ def add(config, filename, host, username, regex, path, destination):
     click.secho("Added host.", fg='green')
 
 @cli.command()
+
 @pass_config
-def latest(config):
+@click.argument('source', required=True, autocompletion=get_sources)
+def fetch(config, source):
+    config.source = source
     with config.shell() as (config, shell):
         files = list(_get_files(config, shell))
         if not files:
