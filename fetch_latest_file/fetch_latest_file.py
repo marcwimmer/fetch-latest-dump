@@ -12,6 +12,7 @@ import click
 import subprocess
 from . import cli
 from .config import pass_config
+from .config import Config
 
 def get_sources(ctx, args, incomplete):
     config = Config()
