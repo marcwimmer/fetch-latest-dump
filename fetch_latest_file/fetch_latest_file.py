@@ -65,9 +65,9 @@ def add(config, filename, host, username, regex, path, destination):
         )
     click.secho("Added host.", fg='green')
 
-@cli.command(default_command=True)
+@cli.command()
 @pass_config
-def fetch(config):
+def latest(config):
     with config.shell() as (config, shell):
         files = list(_get_files(config, shell))
         if not files:

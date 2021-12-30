@@ -3,9 +3,10 @@ import sys
 from pathlib import Path
 from .config import pass_config
 import inquirer
-from .default_command import DefaultCommandGroup
 import click_completion
 from .config import Config
+from click_default_group import DefaultGroup
+
 
 click_completion.init()
 
@@ -20,7 +21,7 @@ def get_sources(ctx, args, incomplete):
         keys = list(filter(lambda x: x.startswith(incomplete), keys))
     return keys
 
-@click.group(invoke_without_command=True, cls=DefaultCommandGroup)
+@click.group(invoke_without_command=True, cls=DefaultGroup, default='fetch', default_if_no_args=False)
 @click.option('-s', '--source', required=True, autocompletion=get_sources)
 @pass_config
 def cli(config, source):
