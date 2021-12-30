@@ -14,19 +14,10 @@ global_data = {
     'config': None
 }
 
-def get_sources(ctx, args, incomplete):
-    config = Config()
-    keys = config.sources.keys()
-    if incomplete:
-        keys = list(filter(lambda x: x.startswith(incomplete), keys))
-    return keys
-
-@click.group(invoke_without_command=True, cls=DefaultGroup, default='fetch', default_if_no_args=False)
-@click.option('-s', '--source', required=True, autocompletion=get_sources)
+@click.group(invoke_without_command=True, cls=DefaultGroup, default='fetch', default_if_no_args=True)
 @pass_config
-def cli(config, source):
+def cli(config):
     global_data['config'] = config
-    config.source = source
 
 
 
