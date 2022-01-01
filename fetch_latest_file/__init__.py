@@ -3,7 +3,6 @@ import sys
 from pathlib import Path
 from .config import pass_config
 import inquirer
-import click_completion
 from .config import Config
 from click_default_group import DefaultGroup
 
