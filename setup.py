@@ -18,12 +18,13 @@ from subprocess import check_call, check_output
 
 # Package meta-data.
 NAME = 'fetch-latest-file'
+SHELL_CALL = "fetch"
 DESCRIPTION = 'Easy fetch a latest file.'
 URL = 'https://github.com/marcwimmer/fetch-latest-file'
 EMAIL = 'marc@itewimmer.de'
 AUTHOR = 'Marc-Christian Wimmer'
 REQUIRES_PYTHON = '>=3.6.0'
-VERSION = '0.0.8'
+VERSION = '0.0.9'
 
 # What packages are required for this module to be executed?
 REQUIRED = [ 'click', 'inquirer', 'arrow', 'pathlib' ]
@@ -98,19 +99,21 @@ def setup_click_autocompletion():
 
     def setup_for_shell_generic(shell):
         path = Path(f"/etc/{shell}_completion.d")
-        done = False
-        technical_name = NAME.upper().replace("-", "_")
+        technical_name = SHELL_CALL.upper().replace("-", "_")
+        completion = check_output(["/usr/local/bin/" + SHELL_CALL], env={
+            f"_{technical_name}_COMPLETE": f"{shell}_source"
+        })
         if path.exists():
             if os.access(path, os.W_OK):
-                os.system(f"_{technical_name}_COMPLETE={shell}_source {NAME} > '{path / NAME}'")
+                (path / SHELL_CALL).write_bytes(completion)
                 return
 
         if not (path / NAME).exists():
             rc = Path(os.path.expanduser("~")) / f'.{shell}rc'
             if not rc.exists():
                 return
-            complete_file = rc.parent / f'.{NAME}-completion.sh'
-            os.system(f"_{technical_name}_COMPLETE={shell}_source {NAME} > '{complete_file}'")
+            complete_file = rc.parent / f'.{SHELL_CALL}-completion.sh'
+            complete_file.write_bytes(completion)
             if complete_file.name not in rc.read_text():
                 content = rc.read_text()
                 content += '\nsource ~/' + complete_file.name
@@ -142,7 +145,7 @@ setup(
     #py_modules=['prlsnapshotter'],
 
     entry_points={
-        'console_scripts': ['fetch=fetch_latest_file:cli'],
+        'console_scripts': [SHELL_CALL + '=fetch_latest_file:cli'],
     },
     data_files=[
     ],
