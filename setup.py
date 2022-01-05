@@ -12,22 +12,19 @@ from pathlib import Path
 
 from setuptools import find_packages, setup, Command
 from setuptools.command.install import install
+from setuptools.config import read_configuration
 from subprocess import check_call, check_output
 
+import inspect
+import os
+from pathlib import Path
+current_dir = Path(os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe()))))
+setup_cfg = read_configuration("setup.cfg")
+metadata = setup_cfg['metadata']
 
-
-# Package meta-data.
-NAME = 'fetch-latest-file'
-SHELL_CALL = "fetch"
-DESCRIPTION = 'Easy fetch a latest file.'
-URL = 'https://github.com/marcwimmer/fetch-latest-file'
-EMAIL = 'marc@itewimmer.de'
-AUTHOR = 'Marc-Christian Wimmer'
-REQUIRES_PYTHON = '>=3.6.0'
-VERSION = '0.0.9'
 
 # What packages are required for this module to be executed?
-REQUIRED = [ 'click', 'inquirer', 'arrow', 'pathlib' ]
+REQUIRED = [ 'click', 'inquirer', 'arrow', 'pathlib', 'shellingham' ]
 
 # What packages are optional?
 EXTRAS = {
@@ -47,16 +44,16 @@ try:
     with io.open(os.path.join(here, 'README.md'), encoding='utf-8') as f:
         long_description = '\n' + f.read()
 except FileNotFoundError:
-    long_description = DESCRIPTION
+    long_description = metadata['DESCRIPTION']
 
 # Load the package's __version__.py module as a dictionary.
 about = {}
-if not VERSION:
-    project_slug = NAME.lower().replace("-", "_").replace(" ", "_")
+if not metadata['version']:
+    project_slug = metadata['name'].lower().replace("-", "_").replace(" ", "_")
     with open(os.path.join(here, project_slug, '__version__.py')) as f:
         exec(f.read(), about)
 else:
-    about['__version__'] = VERSION
+    about['__version__'] = metadata['version']
 
 
 class UploadCommand(Command):
@@ -95,64 +92,23 @@ class UploadCommand(Command):
 
         sys.exit()
 
-def setup_click_autocompletion():
-
-    def setup_for_shell_generic(shell):
-        path = Path(f"/etc/{shell}_completion.d")
-        technical_name = SHELL_CALL.upper().replace("-", "_")
-        completion = check_output(["/usr/local/bin/" + SHELL_CALL], env={
-            f"_{technical_name}_COMPLETE": f"{shell}_source"
-        })
-        if path.exists():
-            if os.access(path, os.W_OK):
-                (path / SHELL_CALL).write_bytes(completion)
-                return
-
-        if not (path / NAME).exists():
-            rc = Path(os.path.expanduser("~")) / f'.{shell}rc'
-            if not rc.exists():
-                return
-            complete_file = rc.parent / f'.{SHELL_CALL}-completion.sh'
-            complete_file.write_bytes(completion)
-            if complete_file.name not in rc.read_text():
-                content = rc.read_text()
-                content += '\nsource ~/' + complete_file.name
-                rc.write_text(content)
-
-    setup_for_shell_generic('zsh')
-    setup_for_shell_generic('bash')
-    setup_for_shell_generic('fish')
-
 class InstallCommand(install):
     """Post-installation for installation mode."""
     def run(self):
         install.run(self)
-        setup_click_autocompletion()
 
-# Where the magic happens:
 setup(
-    name=NAME,
     version=about['__version__'],
-    description=DESCRIPTION,
     long_description=long_description,
     long_description_content_type='text/markdown',
-    author=AUTHOR,
-    author_email=EMAIL,
-    python_requires=REQUIRES_PYTHON,
-    url=URL,
     packages=find_packages(exclude=["tests", "*.tests", "*.tests.*", "tests.*"]),
     # If your package is a single module, use this instead of 'packages':
     #py_modules=['prlsnapshotter'],
-
-    entry_points={
-        'console_scripts': [SHELL_CALL + '=fetch_latest_file:cli'],
-    },
     data_files=[
     ],
     install_requires=REQUIRED,
     extras_require=EXTRAS,
     include_package_data=True,
-    license='MIT',
     classifiers=[
         # Trove classifiers
         # Full list: https://pypi.python.org/pypi?%3Aaction=list_classifiers
