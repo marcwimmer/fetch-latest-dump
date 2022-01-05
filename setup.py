@@ -96,21 +96,18 @@ class UploadCommand(Command):
 class InstallCommand(install):
     def run(self):
         install.run(self)
-        self.setup_click_autocompletion()
+        self.execute(self.setup_click_autocompletion, args=tuple([]), msg="Setup Click Completion")
 
     def setup_click_autocompletion(self):
-        for console_script in setup_cfg['options']['entry_points']['console_scripts']:
-            console_call = console_script.split("=")[0].strip()
-            package = console_script.split("=")[1].strip()
-            package_name, pyclass = package.split(":")
+        os.system("touch /tmp/hier_fetch")
+        # for console_script in setup_cfg['options']['entry_points']['console_scripts']:
+        #     console_call = console_script.split("=")[0].strip()
 
-            subprocess.check_call([
-                "click-completion-helper",
-                "setup",
-                console_call,
-                package_name,
-                pyclass
-            ])
+        #     subprocess.run([
+        #         "click-completion-helper",
+        #         "setup",
+        #         console_call,
+        #     ])
 
 setup(
     version=about['__version__'],
