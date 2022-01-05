@@ -5,6 +5,7 @@ import sys
 from pathlib import Path
 from .config import pass_config
 from .config import Config
+import shellingham
 from click_default_group import DefaultGroup
 
 
