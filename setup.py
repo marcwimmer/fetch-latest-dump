@@ -7,6 +7,7 @@
 import io
 import os
 import sys
+import subprocess
 from shutil import rmtree
 from pathlib import Path
 
@@ -24,7 +25,7 @@ metadata = setup_cfg['metadata']
 
 
 # What packages are required for this module to be executed?
-REQUIRED = [ 'click', 'inquirer', 'arrow', 'pathlib', 'shellingham' ]
+REQUIRED = [ 'click', 'inquirer', 'arrow', 'pathlib', 'click-completion-helper', 'click-default-group' ]
 
 # What packages are optional?
 EXTRAS = {
@@ -93,9 +94,23 @@ class UploadCommand(Command):
         sys.exit()
 
 class InstallCommand(install):
-    """Post-installation for installation mode."""
     def run(self):
         install.run(self)
+        self.setup_click_autocompletion()
+
+    def setup_click_autocompletion(self):
+        for console_script in setup_cfg['options']['entry_points']['console_scripts']:
+            console_call = console_script.split("=")[0].strip()
+            package = console_script.split("=")[1].strip()
+            package_name, pyclass = package.split(":")
+
+            subprocess.check_call([
+                "click-completion-helper",
+                "setup",
+                console_call,
+                package_name,
+                pyclass
+            ])
 
 setup(
     version=about['__version__'],
