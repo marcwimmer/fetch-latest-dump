@@ -1,7 +1,6 @@
 # fetch-latest-file
 
-
-## installing 
+## installing
 
 ```bash
 pip3 install fetch-latest-file
@@ -9,6 +8,7 @@ fetch install-completion
 ```
 
 ## configuration
+
 ```bash
 
 mkdir -p ~/.fetch_latest_file
