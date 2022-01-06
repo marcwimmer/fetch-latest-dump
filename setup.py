@@ -25,7 +25,7 @@ metadata = setup_cfg['metadata']
 NAME = metadata['name']
 
 # What packages are required for this module to be executed?
-REQUIRED = [ 'click', 'inquirer', 'arrow', 'pathlib', 'click-completion-helper', 'click-default-group' ]
+REQUIRED = [ 'click>=8.0.3', 'inquirer', 'arrow', 'pathlib', 'click-completion-helper', 'click-default-group' ]
 
 # What packages are optional?
 EXTRAS = {
