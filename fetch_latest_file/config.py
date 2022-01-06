@@ -20,6 +20,8 @@ class Config(object):
         self.source = None
         if BASE_PATH.exists():
             for file in BASE_PATH.glob("*"):
+                if file.startswith('.'):
+                    continue
                 for section, config in self.parse_file(file):
                     self.sources[section] = config
 
