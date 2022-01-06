@@ -34,10 +34,11 @@ def _get_files(config, shell):
             yield file
 
 def transfer(config, filename):
+    destination = os.path.expanduser(config['destination'])
     subprocess.run([
         "rsync",
         f"{config['host']}:{config['path']}/{filename}",
-        config['destination'],
+        destination,
         "-arP"
     ])
 
