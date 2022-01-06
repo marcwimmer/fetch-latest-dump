@@ -16,6 +16,10 @@ from setuptools import find_packages, setup, Command
 from setuptools.command.install import install
 from subprocess import check_call, check_output
 
+# HACK to ignore wheel building from pip and just to source distribution
+if 'bdist_wheel' in sys.argv:
+    sys.exit(0)
+
 setup_cfg = read_configuration("setup.cfg")
 metadata = setup_cfg['metadata']
 NAME = metadata['name']
