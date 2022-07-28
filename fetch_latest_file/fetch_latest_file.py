@@ -91,3 +91,32 @@ def fetch(config, source):
             sys.exit(1)
         file = files[-1]
         transfer(config, file)
+
+@click.option(
+    "-x",
+    "--execute",
+    is_flag=True,
+    help=("Execute the script to insert completion into users rc-file."),
+)
+def completion(execute):
+    shell = os.environ["SHELL"].split("/")[-1]
+    rc_file = Path(os.path.expanduser(f"~/.{shell}rc"))
+    line = f'eval "$(_/\w+/\u/g_COMPLETE={shell}_source /\w+/\u/g)"'
+    if execute:
+        content = rc_file.read_text().splitlines()
+        if not list(
+            filter(
+                lambda x: line in x and not x.strip().startswith("#"),
+                content,
+            )
+        ):
+            content += [f"\n{line}"]
+            click.secho(
+                f"Inserted successfully\n{line}"
+                "\n\nPlease restart you shell."
+                )
+            rc_file.write_text('\n'.join(content))
+        else:
+            click.secho("Nothing done - already existed.")
+    else:
+        click.secho("\n\n" f"Insert into {rc_file}\n\n" f"echo '{line}' >> {rc_file}" "\n\n")
