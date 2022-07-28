@@ -23,7 +23,7 @@ NAME = metadata['name']
 
 # What packages are required for this module to be executed?
 REQUIRED = [
-    'click>=8.0.3', 'inquirer', 'arrow',
+    'click==8.0.3', 'inquirer', 'arrow',
     'pathlib', 'click-completion-helper', 'click-default-group',
     'paramiko'
     ]
