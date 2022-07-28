@@ -16,16 +16,17 @@ from setuptools import find_packages, setup, Command
 from setuptools.command.install import install
 from subprocess import check_call, check_output
 
-# HACK to ignore wheel building from pip and just to source distribution
-if 'bdist_wheel' in sys.argv:
-    sys.exit(0)
 
 setup_cfg = read_configuration("setup.cfg")
 metadata = setup_cfg['metadata']
 NAME = metadata['name']
 
 # What packages are required for this module to be executed?
-REQUIRED = [ 'click>=8.0.3', 'inquirer', 'arrow', 'pathlib', 'click-completion-helper', 'click-default-group' ]
+REQUIRED = [
+    'click>=8.0.3', 'inquirer', 'arrow',
+    'pathlib', 'click-completion-helper', 'click-default-group',
+    'paramiko'
+    ]
 
 
 here = os.path.abspath(os.path.dirname(__file__))
@@ -88,22 +89,6 @@ class UploadCommand(Command):
 
         sys.exit()
 
-class InstallCommand(install):
-    def run(self):
-        install.run(self)
-        self.execute(self.setup_click_autocompletion, args=tuple([]), msg="Setup Click Completion")
-
-    def setup_click_autocompletion(self):
-        for console_script in setup_cfg['options']['entry_points']['console_scripts']:
-            console_call = console_script.split("=")[0].strip()
-
-            # if click completion helper is fresh installed and not available now
-            subprocess.run(["pip3", "install", "click-completion-helper"])
-            subprocess.run([
-                "click-completion-helper",
-                "setup",
-                console_call,
-            ])
 
 setup(
     version=about['__version__'],
@@ -115,6 +100,5 @@ setup(
     # $ setup.py publish support.
     cmdclass={
         'upload': UploadCommand,
-        'install': InstallCommand,
     },
 )
