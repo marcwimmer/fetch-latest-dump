@@ -104,6 +104,17 @@ def fetch(config, source, dryrun, verbose):
 
 
 @cli.command()
+def sample():
+    click.secho((
+        "[name1]\n"
+        "regex = *.dump.gz\n"
+        "path = <remote path>\n"
+        "host = <ssh host>\n"
+        "destination = <here to put - a filename>\n"
+    ))
+
+
+@cli.command()
 @click.option(
     "-x",
     "--execute",
