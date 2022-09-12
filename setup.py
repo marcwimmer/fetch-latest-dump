@@ -25,7 +25,7 @@ NAME = metadata['name']
 REQUIRED = [
     'click==8.0.3', 'inquirer', 'arrow',
     'pathlib', 'click-default-group',
-    'paramiko'
+    'paramiko', 'shellingham'
     ]
 
 
