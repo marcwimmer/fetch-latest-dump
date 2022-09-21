@@ -1,4 +1,5 @@
 #!/usr/bin/env python3
+from datetime import datetime
 import re
 import os
 import sys
@@ -41,9 +42,14 @@ def _get_files(config, shell, verbose=False):
 
 def transfer(config, filename):
     destination = os.path.expanduser(config["destination"])
+    source = f"{config['host']}:{config['path']}/{filename}"
+    click.secho(f"Copying {source} to {destination}", fg='yellow')
+    started = datetime.now()
     subprocess.run(
-        ["rsync", f"{config['host']}:{config['path']}/{filename}", destination, "-arP"]
+        ["rsync", source, destination, "-arP"]
     )
+    seconds = (datetime.now() - started).total_seconds()
+    click.secho(f"Success - done in {seconds}s", fg='green')
 
 
 @cli.command(help="Choose specific file to download")
