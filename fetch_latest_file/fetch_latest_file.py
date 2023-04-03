@@ -53,7 +53,7 @@ def transfer(config, filename):
 
 
 @cli.command(help="Choose specific file to download")
-@click.argument("source", required=True, autocompletion=get_sources)
+@click.argument("source", required=True, shell_complete=get_sources)
 @pass_config
 def choose(config, source):
     config.source = source
@@ -92,7 +92,7 @@ def add(config, source, filename, host, username, regex, path, destination):
 
 @cli.command()
 @pass_config
-@click.argument("source", required=True, autocompletion=get_sources)
+@click.argument("source", required=True, shell_complete=get_sources)
 @click.option("-n", "--dryrun", is_flag=True)
 @click.option("-v", "--verbose", is_flag=True)
 def fetch(config, source, dryrun, verbose):
