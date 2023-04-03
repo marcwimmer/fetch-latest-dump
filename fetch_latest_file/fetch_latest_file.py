@@ -43,13 +43,11 @@ def _get_files(config, shell, verbose=False):
 def transfer(config, filename):
     destination = os.path.expanduser(config["destination"])
     source = f"{config['host']}:{config['path']}/{filename}"
-    click.secho(f"Copying {source} to {destination}", fg='yellow')
+    click.secho(f"Copying {source} to {destination}", fg="yellow")
     started = datetime.now()
-    subprocess.run(
-        ["rsync", source, destination, "-arP"]
-    )
+    subprocess.run(["rsync", source, destination, "-arP"])
     seconds = (datetime.now() - started).total_seconds()
-    click.secho(f"Success - done in {seconds}s", fg='green')
+    click.secho(f"Success - done in {seconds}s", fg="green")
 
 
 @cli.command(help="Choose specific file to download")
@@ -90,12 +88,12 @@ def add(config, source, filename, host, username, regex, path, destination):
     click.secho("Added host.", fg="green")
 
 
-@cli.command()
+@cli.command(name="fetch")
 @pass_config
 @click.argument("source", required=True, shell_complete=get_sources)
 @click.option("-n", "--dryrun", is_flag=True)
 @click.option("-v", "--verbose", is_flag=True)
-def fetch(config, source, dryrun, verbose):
+def cmd_fetch(config, source, dryrun, verbose):
     config.source = source
     with config.shell() as (config, shell):
         files = list(_get_files(config, shell, verbose=verbose))
@@ -111,13 +109,15 @@ def fetch(config, source, dryrun, verbose):
 
 @cli.command()
 def sample():
-    click.secho((
-        "[name1]\n"
-        "regex = *.dump.gz\n"
-        "path = <remote path>\n"
-        "host = <ssh host>\n"
-        "destination = <here to put - a filename>\n"
-    ))
+    click.secho(
+        (
+            "[name1]\n"
+            "regex = *.dump.gz\n"
+            "path = <remote path>\n"
+            "host = <ssh host>\n"
+            "destination = <here to put - a filename>\n"
+        )
+    )
 
 
 @cli.command()
