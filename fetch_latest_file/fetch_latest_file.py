@@ -18,7 +18,7 @@ from .config import Config
 
 def get_sources(ctx, args, incomplete):
     config = Config()
-    keys = config.sources.keys()
+    keys = list(config.sources.keys())
     if incomplete:
         keys = list(filter(lambda x: x.startswith(incomplete), keys))
     return keys
