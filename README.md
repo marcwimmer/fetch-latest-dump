@@ -3,8 +3,8 @@
 ## installing
 
 ```bash
-pip3 install fetch-latest-file
-fetch install-completion
+pipx install fetch-latest-file
+fetch completion -x
 ```
 
 ## configuration
