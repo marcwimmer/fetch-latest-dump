@@ -88,6 +88,24 @@ def add(config, source, filename, host, username, regex, path, destination):
     click.secho("Added host.", fg="green")
 
 
+@cli.command(name="all")
+@pass_config
+@click.option("-n", "--dryrun", is_flag=True)
+@click.option("-v", "--verbose", is_flag=True)
+def fetch_all(config, dryrun, verbose):
+    faileds = []
+    for key in config.sources.keys():
+        config.source = key
+        try:
+            _cmd_fetch(config, dryrun, verbose)
+        except Exception as ex:
+            faileds.append((config.source, ex))
+    if faileds:
+        for failed in faileds:
+            click.secho(f"{failed[0]}: {str(failed[1])}", fg='red')
+        sys.exit(-1)
+
+
 @cli.command(name="fetch")
 @pass_config
 @click.argument("source", required=True, shell_complete=get_sources)
@@ -95,6 +113,9 @@ def add(config, source, filename, host, username, regex, path, destination):
 @click.option("-v", "--verbose", is_flag=True)
 def cmd_fetch(config, source, dryrun, verbose):
     config.source = source
+    _cmd_fetch(config, dryrun, verbose)
+
+def _cmd_fetch(config, dryrun=False, verbose=False):
     with config.shell() as (config, shell):
         files = list(_get_files(config, shell, verbose=verbose))
         if not files:
