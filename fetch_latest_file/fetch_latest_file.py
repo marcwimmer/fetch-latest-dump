@@ -30,13 +30,13 @@ def fetch(config):
     pass
 
 
-def _get_files(config, shell, verbose=False):
+def _get_files(config, shell, verbose=False, all=False):
     regex = config.get("regex", config.get("match", ".*"))
     if verbose:
         click.secho(f"Using regex '{regex}' to identify files.", fg="yellow")
     files = list(filter(bool, shell(["ls", "-tr", config["path"]])))
     for file in files:
-        if re.findall(regex, file):
+        if all or re.findall(regex, file):
             yield file
 
 
@@ -52,11 +52,12 @@ def transfer(config, filename):
 
 @cli.command(help="Choose specific file to download")
 @click.argument("source", required=True, shell_complete=get_sources)
+@click.option("--all", is_flag=True)
 @pass_config
-def choose(config, source):
+def choose(config, source, all):
     config.source = source
     with config.shell() as (config, shell):
-        files = list(_get_files(config, shell))
+        files = list(_get_files(config, shell, all=all))
         answer = inquirer.prompt(
             [inquirer.List("file", "Please choose:", choices=list(reversed(files)))]
         )
