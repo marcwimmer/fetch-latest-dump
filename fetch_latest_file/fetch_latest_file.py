@@ -66,27 +66,47 @@ def choose(config, source, all):
         file = answer["file"]
         transfer(config, file)
 
+def _generate_unique_filename(base_name, directory="."):
+    """
+    Generate a unique filename by appending a number to the base name if necessary.
+
+    :param base_name: The starting base name of the file (e.g., "file").
+    :param directory: The directory to check for existing files (default is the current directory).
+    :return: A unique filename in the form 'base_name_number'.
+    """
+    counter = 1
+    # Extract the file extension if it exists
+    name, ext = os.path.splitext(base_name)
+    
+    # Check for unique filename
+    unique_name = base_name
+    while (directory / (unique_name  + ext)).exists():
+        unique_name = f"{name}_{counter}{ext}"
+        counter += 1
+    
+    return Path((directory / (unique_name + ext)))
 
 @cli.command()
-@click.option("-s", "--source", required=True)
-@click.option("-f", "--filename", required=True)
-@click.option("-H", "--host", required=True)
-@click.option("-U", "--username", required=False)
-@click.option("-r", "--regex", required=True, default=".*")
-@click.option("-p", "--path", required=True)
-@click.option("-d", "--destination", required=True)
+@click.argument("source", required=True)
+@click.argument("host", required=True)
+@click.argument("destination", required=True)
+@click.argument("path", required=True)
+@click.argument("match", required=True, default=".*")
 @pass_config
-def add(config, source, filename, host, username, regex, path, destination):
-    config.source = source
-    config.add(
-        filename=filename,
-        host=host,
-        username=username,
-        path=path,
-        regex=regex,
-        destination=destination,
-    )
-    click.secho("Added host.", fg="green")
+def add(config, source, host, destination, match, path):
+
+    configdir = Path(os.path.expanduser("~/.fetch_latest_file.d"))
+    unique_file = _generate_unique_filename(source, configdir)
+    unique_file.write_text(f"""[{source}]
+host = {host}
+path = {path}
+regex = {match}
+destination = {destination}
+    """)
+
+    click.secho(f"Successfully added:", fg="green")
+    click.secho(f"\n{unique_file.absolute()}", fg='yellow')
+    click.secho(unique_file.read_text(), fg='yellow')
 
 
 @cli.command(name="all")

@@ -11,7 +11,7 @@ fetch completion -x
 
 ```bash
 
-mkdir -p ~/.fetch_latest_file
+mkdir -p ~/.fetch_latest_file.d
 
 echo <EOF
 [source1]
@@ -26,5 +26,5 @@ destination = output_filepath
 match = regex expression
 path = search path on host
 
-EOF > ~/.fetch_latest_file/config1
+EOF > ~/.fetch_latest_file.d/config1
 ```
