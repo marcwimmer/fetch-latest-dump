@@ -40,8 +40,10 @@ def _get_files(config, shell, verbose=False, all=False):
             yield file
 
 
-def transfer(config, filename):
+def transfer(config, filename, force_filename=None):
     destination = os.path.expanduser(config["destination"])
+    if force_filename:
+        destination = str(Path(destination).parent / force_filename)
     source = f"{config['host']}:{config['path']}/{filename}"
     click.secho(f"Copying {source} to {destination}", fg="yellow")
     started = datetime.now()
@@ -64,7 +66,7 @@ def choose(config, source, all):
         if not answer:
             sys.exit(0)
         file = answer["file"]
-        transfer(config, file)
+        transfer(config, file, force_filename=Path(answer['file']).name)
 
 def _generate_unique_filename(base_name, directory="."):
     """
